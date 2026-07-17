@@ -16,6 +16,8 @@ The issue tracker and triage label vocabulary should have been provided to you â
 
 Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and comments. If the source is a spec, treat its approved architecture proposal, validation result, final solution shape, and implementation constraints as binding inputs.
 
+Repository scope from the spec is also a binding input. If the spec does not say which repositories or submodules are in scope, stop and ask for that to be fixed before ticketing.
+
 ### 2. Explore the codebase (optional)
 
 If you have not already explored the codebase, do so only as needed to understand the frozen solution you are decomposing. Do not redesign the solution here. Ticket titles and descriptions should use the project's domain glossary vocabulary, and respect ADRs in the area you're touching.
@@ -51,6 +53,7 @@ Present the proposed breakdown as a numbered list. For each ticket, show:
 - **What it delivers**: the end-to-end behaviour this ticket makes work
 - **Frozen shape coverage**: which modules, migrations, contracts, or flow segments from the approved solution shape this ticket implements
 - **Implementation guardrails**: any `sqlc`, migration, contract, or no-touch constraints this ticket must preserve
+- **Repository scope**: which repository or submodule this ticket is allowed to change, and which related repositories must remain untouched
 
 Ask the user:
 

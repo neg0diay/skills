@@ -14,6 +14,7 @@ The issue tracker and triage label vocabulary should have been provided to you â
 
 2. Produce an **Architecture Proposal** before you write the final spec. The proposal must describe:
 
+- The repository scope of the change
 - The current codebase area you investigated
 - The proposed design
 - How the design integrates into the existing codebase
@@ -28,6 +29,7 @@ Stop and get the user's approval on the proposal before proceeding.
 - The main system flow or user flow is complete
 - The relevant contracts, state transitions, data/persistence changes, and operational effects for this type of system are accounted for
 - It is clear which existing modules must remain unchanged
+- It is clear which repositories or git submodules are in scope and which must remain untouched
 - The implementation can proceed without further architecture research
 
 For backend projects, validate data-layer and migration conventions explicitly. In particular:
@@ -46,6 +48,8 @@ Check with the user that these seams match their expectations.
 
 5. Write the spec using the template below, then publish it to the project issue tracker. The spec must freeze the final solution shape so the implementation agent does not need to reinterpret the architecture. Apply the `ready-for-agent` triage label - no need for additional triage.
 
+Do not publish the spec unless repository scope is explicit. In a super-repository or git-submodule setup, the spec must say exactly which repositories or submodules are in scope and which must remain untouched.
+
 <spec-template>
 
 ## Problem Statement
@@ -56,11 +60,29 @@ The problem that the user is facing, from the user's perspective.
 
 The solution to the problem, from the user's perspective.
 
+## Repository Scope
+
+This section is mandatory.
+
+- **Primary repository:** the main repository where implementation is expected
+- **Repositories in scope:** every repository or git submodule that is allowed to change for this solution
+- **Repositories out of scope:** every repository or git submodule that must remain unchanged
+
+If the project is a single repository with no submodules, say that explicitly.
+
 ## Architecture Proposal
 
 ### Current Area
 
 Which part of the current codebase was investigated and why it is the relevant area for this change.
+
+### Repository Scope
+
+Which repositories are involved in this solution. For super-repositories with git submodules, explicitly list:
+
+- Which repository is the primary implementation target
+- Which submodules or sibling repositories must be changed
+- Which submodules or sibling repositories must remain untouched
 
 ### Proposed Design
 
@@ -82,15 +104,21 @@ Anything that had to be resolved before the design could be frozen.
 
 Whether the user approved the architecture proposal.
 
+The approval must include the repository scope, not just the design shape.
+
 ## Validation Report
 
 ### Validation Status
 
 `Approved`, `Approved with constraints`, or `Not approved`.
 
+If repository scope is missing or ambiguous, the validation result must be `Not approved`.
+
 ### Coverage Check
 
 Whether all affected modules, layers, and integration points are covered.
+
+This must also confirm repository boundaries: in a super-repository or multi-repository setup, verify that the implementation scope is explicit per repository or submodule.
 
 ### Flow Completeness Check
 
@@ -109,6 +137,16 @@ Any constraints discovered during validation that must bind implementation.
 ## Final Solution Shape
 
 This section freezes the implementation shape after proposal approval and validation.
+
+### Repositories In Scope
+
+- ...
+
+### Repositories or Submodules That Must Remain Unchanged
+
+- ...
+
+These lists are binding on implementation.
 
 ### Modules That Must Be Changed
 
@@ -181,6 +219,7 @@ This section is binding on the implementation agent.
 - Do not reinterpret the intended solution.
 - Do not introduce new modules, migrations, interfaces, flows, contracts, or infrastructure changes unless they are explicitly listed in this spec.
 - If this spec is insufficient or contradictory, stop and ask for clarification instead of designing a new solution.
+- Do not change any repository or git submodule unless it is explicitly listed under repository scope.
 - For Golang backend projects, if `sqlc` is present, do not manually edit generated DB-access code; make the required SQL changes and regenerate through the `sqlc` CLI workflow used by the project.
 - Do not modify old migrations for new work. Create new forward migrations instead.
 

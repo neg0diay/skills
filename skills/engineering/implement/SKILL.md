@@ -8,9 +8,13 @@ Implement the work described by the user in the spec or tickets.
 
 If both tickets and a spec exist, read both before starting. Treat the spec's approved architecture proposal, validation result, final solution shape, and implementation constraints as the source of truth.
 
+Repository scope is part of the source of truth. Only change repositories or git submodules that the spec or ticket explicitly marks as in scope.
+
 Do not perform additional architecture research or redesign the solution during implementation. Do not introduce new modules, migrations, interfaces, flows, contracts, or infrastructure changes unless they are explicitly called for by the spec or ticket.
 
 If the task description is insufficient, contradictory, or missing a frozen solution shape, stop and ask for clarification instead of inventing a new design.
+
+If repository scope is missing or ambiguous, stop and ask for clarification before making changes.
 
 For backend work, preserve the data-layer and migration rules in the spec or ticket. In particular:
 
