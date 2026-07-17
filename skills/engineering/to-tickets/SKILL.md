@@ -14,13 +14,13 @@ The issue tracker and triage label vocabulary should have been provided to you �
 
 ### 1. Gather context
 
-Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and comments.
+Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and comments. If the source is a spec, treat its approved architecture proposal, validation result, final solution shape, and implementation constraints as binding inputs.
 
 ### 2. Explore the codebase (optional)
 
-If you have not already explored the codebase, do so to understand the current state of the code. Ticket titles and descriptions should use the project's domain glossary vocabulary, and respect ADRs in the area you're touching.
+If you have not already explored the codebase, do so only as needed to understand the frozen solution you are decomposing. Do not redesign the solution here. Ticket titles and descriptions should use the project's domain glossary vocabulary, and respect ADRs in the area you're touching.
 
-Look for opportunities to prefactor the code to make the implementation easier. "Make the change easy, then make the easy change."
+Look for opportunities to prefactor the code to make the implementation easier, but keep that prefactoring inside the already approved architecture and frozen solution shape. "Make the change easy, then make the easy change."
 
 ### 3. Draft vertical slices
 
@@ -32,6 +32,9 @@ Break the work into **tracer bullet** tickets.
 - A completed slice is demoable or verifiable on its own
 - Each slice is sized to fit in a single fresh context window
 - Any prefactoring should be done first
+- Each slice must point back to the frozen solution shape: which modules it changes, what part of the flow it introduces, and what it must not change
+- For backend schema work, each slice must preserve migration discipline from the spec: new work goes into new migrations, not edits to previously applied migrations
+- For Golang projects using `sqlc`, any slice that changes the DB layer must call out the SQL source and regeneration step rather than implying manual edits to generated code
 
 </vertical-slice-rules>
 
@@ -46,6 +49,8 @@ Present the proposed breakdown as a numbered list. For each ticket, show:
 - **Title**: short descriptive name
 - **Blocked by**: which other tickets (if any) must complete first
 - **What it delivers**: the end-to-end behaviour this ticket makes work
+- **Frozen shape coverage**: which modules, migrations, contracts, or flow segments from the approved solution shape this ticket implements
+- **Implementation guardrails**: any `sqlc`, migration, contract, or no-touch constraints this ticket must preserve
 
 Ask the user:
 
@@ -103,5 +108,9 @@ The end-to-end behaviour this ticket makes work, from the user's perspective —
 </issue-template>
 
 In either form, avoid specific file paths or code snippets — they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.
+
+Do not use ticket creation to reopen architecture design. Tickets decompose the approved solution; they do not redefine it. If the source spec is missing an approved proposal, validation result, or frozen solution shape, stop and ask for that to be completed first.
+
+Do not weaken backend implementation guardrails during ticketing. In particular, keep any `sqlc` regeneration requirements and new-migration-only rules explicit on the relevant tickets.
 
 Work the frontier one ticket at a time with `/implement`, clearing context between tickets.
